@@ -40,6 +40,12 @@ $(function () {
             //poneiwaz pobieramy 1 ksiązke po id
             var singleBook = JSON.parse(bookList[0]);
             span.next().text(singleBook.description);
+
+            //dodanie przycisku usuwania
+            var delBtn = $('<br><button id="del">Usuń</button>');
+            span.next().append(delBtn);
+
+
         }).fail(function () {
             console.log('Error');
         });
@@ -50,7 +56,7 @@ $(function () {
     var addBook = $('#addBook');
     addBook.on('click', function (e) {
         e.preventDefault();//KONIECZNE - poniewaz wysyłamy ajaxem
-        //pobieramy sobie dane z formularza
+        //pobieramy  dane z formularza
         var form = $(this).parent();//zapisuje do zmiennej formularz
 
         var author = form.find('input[name=author]').val();
@@ -71,14 +77,40 @@ $(function () {
         }).done(function (bookList) {
             var singleBook = JSON.parse(bookList[0]);
             //tworzymy element li z nową książk
-            var newLi = $('<div data-id="' + singleBook.id + '"><span class="bookTitle">' + singleBook.title + '</span><div class="bookDescription" style="margin-top:20px; font-weight: bold; color: blue; font-size: 13px;"></div></div><hr>');
+            var newLi = $('<div data-id="' + singleBook.id + '"><span class="bookTitle">' + singleBook.title + '</span><div class="bookDescription" style="margin-top:20px; font-weight: bold; color: blue; font-size: 13px;"></div>\n\
+                        </div><hr>');
             //dodajemy element do listy
             divBooks.append(newLi);
         }).fail(function () {
 
         });
     });
-    
+
+
+
+    //Usuwanie książki
+
+    divBooks.on('click', 'button#del', function (e) {
+        e.preventDefault();
+        var btn = $(this);
+     
+        var id = btn.parent().parent().data('id');
+           alert(id);
+        $.ajax({
+            url: 'api/books.php',  //nie dziala tez 'api/books/phg?id='+id
+            dataType: 'json',
+            data: 'id='+id,
+            type: 'DELETE'
+            //ciagle wystepuje blad nie moze przekazac danych metoda delete
+        }).done(function () {
+            btn.parent().remove();
+            alert('jes');
+            
+        }).fail (function () {
+           console.log('errer'); 
+        });
+    });
+
     //AKTUALIZACJA KSIĄŻEK (PUT)
     //1) do każdego diva z opisem (lub dodatkowego pod nim) dodajemy formularz edycji książki
     //2) formualrz jest ukryty domyslnie i zaladowany danymi ksiazki val('wartosc')
@@ -92,7 +124,7 @@ $(function () {
     //10) aktualizujemy seterami dane w obiekcie
     //11) wywołujemy metodę update()
     //12) jak się uda to w drzewie dom aktualizujemy tytul i opis elementu
-    
+
     //USUWANIE KSIĄŻEK (DELETE)
     //1) dodajemy przycisk obok tytułu z usuwaniem podczas tworzenia ksiazki
     //pamietamy zeby dodac przycisk jak ladujemy przy ladowaniu strony i dodaniu (POST)

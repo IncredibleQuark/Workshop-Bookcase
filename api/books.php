@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         //pobieramy wszystkie książki
         $books = Book::loadAllFromDb($conn);
     }
-    
+
     //zwracamy jsona
     echo json_encode($books);
 } elseif ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -25,14 +25,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $newBook->setAuthor($_POST['author']);
     $newBook->setTitle($_POST['title']);
     $newBook->setDescription($_POST['description']);
-    
+
     $addedBookArray = $newBook->create($conn);
     //tworzymy json z obieku ksiązki i zwracamy go w tablicy 1 elementowej
     echo json_encode($addedBookArray);
+    
 } elseif ($_SERVER['REQUEST_METHOD'] == 'PUT') {
 
     parse_str(file_get_contents("php://input"), $put_vars);
+    
+    
 } elseif ($_SERVER['REQUEST_METHOD'] == 'DELETE') {
 
+
     parse_str(file_get_contents("php://input"), $del_vars);
+    console . log($del_vars['id']);
+    $id = $del_vars['id'];
+
+    $toDelete = Book::loadFromDb($conn, $id);
+    $bookToDelete = $toDelete[0];
+
+    $result = $bookToDelete->delete($conn, $id);
 }
