@@ -30,15 +30,21 @@ class Book implements JsonSerializable {
         }
     }
 
-    public function update(PDO $conn, $id) {
+    public function update(PDO $conn) {
         
     }
 
-    public function delete(PDO $conn, $id) {
-       
-        $conn->query('DELETE * FROM books where id=$id');
-        echo "Wpis usunięty";
-        return [];
+    public function delete(PDO $conn) {
+        $id = $this->getId();
+        $sql = "DELETE FROM books WHERE id=:id";
+        $stmt = $conn->prepare($sql);
+        $result = $stmt->execute(['id' => $id]);
+        if ($result === true) {
+            $this->id = -1;
+            return [json_encode($this)];
+        } else {
+            return [];
+        }
     }
 
     //funkcja ladujaca pojedynczy wiersz
@@ -56,7 +62,7 @@ class Book implements JsonSerializable {
             $book->description = $row['description'];
 
             //implementujemy interfejs ponieważ nie można zrobić jsona z obiektu
-            return [json_encode($book)];
+            return $book;
         } else {
             return [];
         }

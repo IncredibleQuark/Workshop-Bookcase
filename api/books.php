@@ -39,11 +39,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
 
     parse_str(file_get_contents("php://input"), $del_vars);
-    console . log($del_vars['id']);
-    $id = $del_vars['id'];
+
+    $id = intval($del_vars['id']);
 
     $toDelete = Book::loadFromDb($conn, $id);
-    $bookToDelete = $toDelete[0];
+    
 
-    $result = $bookToDelete->delete($conn, $id);
+    $result = $toDelete->delete($conn);
+    echo json_encode($result);
 }

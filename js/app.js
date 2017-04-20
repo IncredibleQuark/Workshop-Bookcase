@@ -38,7 +38,7 @@ $(function () {
             //bookList - tablica obiektow ksiazek w json
             //w tym wypadku tablica 1 elementowa
             //poneiwaz pobieramy 1 ksiązke po id
-            var singleBook = JSON.parse(bookList[0]);
+            var singleBook = bookList;
             span.next().text(singleBook.description);
 
             //dodanie przycisku usuwania
@@ -93,24 +93,26 @@ $(function () {
     divBooks.on('click', 'button#del', function (e) {
         e.preventDefault();
         var btn = $(this);
-     
+
         var id = btn.parent().parent().data('id');
-           alert(id);
+
+
         $.ajax({
-            url: 'api/books.php',  //nie dziala tez 'api/books/phg?id='+id
+            url: 'api/books.php', //nie dziala tez 'api/books/phg?id='+id
             dataType: 'json',
             data: 'id='+id,
             type: 'DELETE'
-            //ciagle wystepuje blad nie moze przekazac danych metoda delete
-        }).done(function () {
-            btn.parent().remove();
-            alert('jes');
             
-        }).fail (function () {
-           console.log('errer'); 
+                    //ciagle wystepuje blad nie moze przekazac danych metoda delete
+        }).done(function (success) {
+            if (success) {
+                btn.parent().parent().remove();
+            }
+        }).fail(function () {
+            console.log('error');
         });
     });
-
+});
     //AKTUALIZACJA KSIĄŻEK (PUT)
     //1) do każdego diva z opisem (lub dodatkowego pod nim) dodajemy formularz edycji książki
     //2) formualrz jest ukryty domyslnie i zaladowany danymi ksiazki val('wartosc')
@@ -134,4 +136,3 @@ $(function () {
     //3) pobieracie ksiązkę z bazy odpowiednią metoda po id (filtrujemy na int)
     //4) mając obiekt ksiązki wywołujemy metodę delete()
     //5) jeśli się uda to usuwamy książkę z drzewa DOM
-});
