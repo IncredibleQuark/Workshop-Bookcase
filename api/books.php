@@ -33,13 +33,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 } elseif ($_SERVER['REQUEST_METHOD'] == 'PUT') {
 
     parse_str(file_get_contents("php://input"), $put_vars);
-    print_r ($put_vars);
     $id = $put_vars['id'];
     $title = $put_vars['title'];
     
-    $update = Book::update($conn, $id, $title);
+    $toUpdate = Book::loadFromDb($conn, $id);
+    $result = $toUpdate->update($conn, $title);
     
-    echo json_encode($update);
+    echo json_encode($result);
     
     
 } elseif ($_SERVER['REQUEST_METHOD'] == 'DELETE') {
@@ -48,10 +48,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     parse_str(file_get_contents("php://input"), $del_vars);
 
     $id = intval($del_vars['id']);
-
     $toDelete = Book::loadFromDb($conn, $id);
-    
-
     $result = $toDelete->delete($conn);
+    
     echo json_encode($result);
 }

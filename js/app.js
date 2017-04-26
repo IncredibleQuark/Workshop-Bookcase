@@ -117,14 +117,16 @@ $(function () {
         
         //przesłanie id książki i tytułu metodą PUT
         $.ajax({
-            url: 'api/books.php?id='+id+'&title='+title,
+            url: 'api/books.php',
+            data: { id: id, title: title },
             dataType: 'json',
             type: 'PUT'
         }).done(function (success) {
             if (success) {
-                divBooks.fadeOut(800, function () {
+                    divBooks.fadeOut(800, function () {
                     divBooks.fadeIn().delay(2000);
-                });
+             
+                    });
             }
         }).fail(function () {
             alert('error');
