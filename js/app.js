@@ -44,6 +44,9 @@ $(function () {
             //dodanie przycisku usuwania
             var delBtn = $('<br><button id="del">Usuń</button>');
             span.next().append(delBtn);
+            //dodanie przycisku edycji
+            var delBtn = $('<br><button id="edit">Edytuj</button>');
+            span.next().append(delBtn);
 
 
         }).fail(function () {
@@ -81,10 +84,54 @@ $(function () {
                         </div><hr>');
             //dodajemy element do listy
             divBooks.append(newLi);
+            //komunikat
+            alert('Książa dodana!');
         }).fail(function () {
-
+            alert('Błąd!');
         });
     });
+
+
+
+
+
+    //dodanie formularza edycji
+    divBooks.on('click', 'button#edit', function (e) {
+        e.preventDefault();
+        var btn = $(this);
+        var id = btn.parent().parent().data('id');
+        var title = btn.parent().parent().find('span').text();
+        var newForm = $('<form action="" method="POST" id="editForm"><input type="text" name="titleEdit" value=' + title + '><button id="confirm" type="submit">Zatwierdź</button></form>');
+        btn.parent().append(newForm);
+    });
+
+    //aktualizacja tytułu książki
+    divBooks.on('click', 'button#confirm', function (e) {
+        e.preventDefault();
+        var form = $(this).parent();
+        var title = form.find('input[name=titleEdit]').val();
+
+        var btn = $(this);
+        var id = btn.parent().parent().parent().data('id');
+        console.log(id);
+        
+        
+        $.ajax({
+            url: 'api/books.php',
+            dataType: 'json',
+            data: 'id=' + id + 'title=' + title,
+            type: 'PUT'
+        }).done(function (success) {
+            if (success) {
+                divBooks.fadeOut(800, function () {
+                    divBooks.fadeIn().delay(2000);
+                });
+            }
+        }).fail(function () {
+            alert('error');
+        });
+    });
+
 
 
 
@@ -98,41 +145,40 @@ $(function () {
 
 
         $.ajax({
-            url: 'api/books.php', //nie dziala tez 'api/books/phg?id='+id
+            url: 'api/books.php',
             dataType: 'json',
-            data: 'id='+id,
+            data: 'id=' + id,
             type: 'DELETE'
-            
-                    //ciagle wystepuje blad nie moze przekazac danych metoda delete
         }).done(function (success) {
             if (success) {
                 btn.parent().parent().remove();
+
             }
         }).fail(function () {
             console.log('error');
         });
     });
 });
-    //AKTUALIZACJA KSIĄŻEK (PUT)
-    //1) do każdego diva z opisem (lub dodatkowego pod nim) dodajemy formularz edycji książki
-    //2) formualrz jest ukryty domyslnie i zaladowany danymi ksiazki val('wartosc')
-    //3) dodajemy przycisk do edycji analogicznie jak w DELETE
-    //4) zakladamy event na przycisk (pamietamy ze jest ladowany dynamicznie)
-    //5) po kliknieciu pokazujemy formualarz
-    //6) po klikeniciu w submit formularza pobieramy z niego dane (podobnie jak POST)
-    //7) tworzymy obiekt do wyslania (jak w POST) - dodać ID!!!!
-    //8) wysylamy ajaxem metodą PUT przekazujac obiekt (PAMIĘTAMY o dodaniu ID
-    //9) pobieramy z bazy obiekt książki na backendzie z aktualnymi danymi
-    //10) aktualizujemy seterami dane w obiekcie
-    //11) wywołujemy metodę update()
-    //12) jak się uda to w drzewie dom aktualizujemy tytul i opis elementu
+//AKTUALIZACJA KSIĄŻEK (PUT)
+//1) do każdego diva z opisem (lub dodatkowego pod nim) dodajemy formularz edycji książki
+//2) formualrz jest ukryty domyslnie i zaladowany danymi ksiazki val('wartosc')
+//3) dodajemy przycisk do edycji analogicznie jak w DELETE
+//4) zakladamy event na przycisk (pamietamy ze jest ladowany dynamicznie)
+//5) po kliknieciu pokazujemy formualarz
+//6) po klikeniciu w submit formularza pobieramy z niego dane (podobnie jak POST)
+//7) tworzymy obiekt do wyslania (jak w POST) - dodać ID!!!!
+//8) wysylamy ajaxem metodą PUT przekazujac obiekt (PAMIĘTAMY o dodaniu ID
+//9) pobieramy z bazy obiekt książki na backendzie z aktualnymi danymi
+//10) aktualizujemy seterami dane w obiekcie
+//11) wywołujemy metodę update()
+//12) jak się uda to w drzewie dom aktualizujemy tytul i opis elementu
 
-    //USUWANIE KSIĄŻEK (DELETE)
-    //1) dodajemy przycisk obok tytułu z usuwaniem podczas tworzenia ksiazki
-    //pamietamy zeby dodac przycisk jak ladujemy przy ladowaniu strony i dodaniu (POST)
-    //2) zakladamy event na przycisk (pamietamy ze on jest ladowany dynamicznie)
-    //po kliknieciu pobieramy id ksiazki (rodzic) i wysylamy do ajaxa za pomocą
-    //metody DELETE (bardzo podobnie jak GET)
-    //3) pobieracie ksiązkę z bazy odpowiednią metoda po id (filtrujemy na int)
-    //4) mając obiekt ksiązki wywołujemy metodę delete()
-    //5) jeśli się uda to usuwamy książkę z drzewa DOM
+//USUWANIE KSIĄŻEK (DELETE)
+//1) dodajemy przycisk obok tytułu z usuwaniem podczas tworzenia ksiazki
+//pamietamy zeby dodac przycisk jak ladujemy przy ladowaniu strony i dodaniu (POST)
+//2) zakladamy event na przycisk (pamietamy ze on jest ladowany dynamicznie)
+//po kliknieciu pobieramy id ksiazki (rodzic) i wysylamy do ajaxa za pomocą
+//metody DELETE (bardzo podobnie jak GET)
+//3) pobieracie ksiązkę z bazy odpowiednią metoda po id (filtrujemy na int)
+//4) mając obiekt ksiązki wywołujemy metodę delete()
+//5) jeśli się uda to usuwamy książkę z drzewa DOM
