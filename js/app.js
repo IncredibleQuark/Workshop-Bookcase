@@ -115,11 +115,10 @@ $(function () {
         var id = btn.parent().parent().parent().data('id');
         console.log(id);
         
-        
+        //przesłanie id książki i tytułu metodą PUT
         $.ajax({
-            url: 'api/books.php',
+            url: 'api/books.php?id='+id+'&title='+title,
             dataType: 'json',
-            data: 'id=' + id + 'title=' + title,
             type: 'PUT'
         }).done(function (success) {
             if (success) {

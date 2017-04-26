@@ -33,6 +33,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 } elseif ($_SERVER['REQUEST_METHOD'] == 'PUT') {
 
     parse_str(file_get_contents("php://input"), $put_vars);
+    print_r ($put_vars);
+    $id = $put_vars['id'];
+    $title = $put_vars['title'];
+    
+    $update = Book::update($conn, $id, $title);
+    
+    echo json_encode($update);
     
     
 } elseif ($_SERVER['REQUEST_METHOD'] == 'DELETE') {
