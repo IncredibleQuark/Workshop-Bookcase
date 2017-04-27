@@ -95,7 +95,6 @@ $(function () {
     divBooks.on('click', 'button#edit', function (e) {
         e.preventDefault();
         var btn = $(this);
-        var id = btn.parent().parent().data('id');
         var title = btn.parent().parent().find('span').text();
         var newForm = $('<form action="" method="POST" id="editForm"><input type="text" name="titleEdit" value=' + title + '><button id="confirm" type="submit">Zatwierdź</button></form>');
         btn.parent().append(newForm);
@@ -109,19 +108,20 @@ $(function () {
 
         var btn = $(this);
         var id = btn.parent().parent().parent().data('id');
-        
+        var toChange = btn.parent().parent().parent().find('span');
         //przesłanie id książki i tytułu metodą PUT
         $.ajax({
             url: 'api/books.php',
-            data: { id: id, title: title },
+            data: {id: id, title: title},
             dataType: 'json',
             type: 'PUT'
         }).done(function (success) {
+            
             if (success) {
-                    divBooks.fadeOut(800, function () {
+                divBooks.fadeOut(800, function () {
                     divBooks.fadeIn().delay(2000);
-             
-                    });
+                    toChange.text(title);
+                });
             }
         }).fail(function () {
             alert('error');
