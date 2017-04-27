@@ -32,14 +32,14 @@ class Book implements JsonSerializable {
 
     //funkcja aktualizująca tytuł wybranej książki
     public function update(PDO $conn, $title ) {
-  
-        $stmt = $conn->prepare('UPDATE books SET title=:title');
+        $id = $this->getId();
+        $stmt = $conn->prepare('UPDATE books SET title=:title WHERE id=:id');
         $result = $stmt->execute([
+            'id' => $id,
             'title' => $title
         ]);
 
         if ($result === true) {
-            $this->id = -1;
             return [json_encode($this)];
         } else {
             return [];

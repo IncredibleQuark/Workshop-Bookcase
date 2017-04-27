@@ -91,10 +91,6 @@ $(function () {
         });
     });
 
-
-
-
-
     //dodanie formularza edycji
     divBooks.on('click', 'button#edit', function (e) {
         e.preventDefault();
@@ -113,7 +109,6 @@ $(function () {
 
         var btn = $(this);
         var id = btn.parent().parent().parent().data('id');
-        console.log(id);
         
         //przesłanie id książki i tytułu metodą PUT
         $.ajax({
@@ -132,9 +127,6 @@ $(function () {
             alert('error');
         });
     });
-
-
-
 
     //Usuwanie książki
 
